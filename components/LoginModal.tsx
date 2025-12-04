@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, X } from 'lucide-react';
+import { Lock, X, Loader2 } from 'lucide-react';
+import { api } from '../src/api/client';
 
 interface LoginModalProps {
   onSuccess: () => void;
@@ -10,24 +11,31 @@ interface LoginModalProps {
 const LoginModal: React.FC<LoginModalProps> = ({ onSuccess, onClose }) => {
   const [pin, setPin] = useState('');
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value.replace(/[^0-9]/g, '');
     if (val.length <= 6) {
         setPin(val);
         setError(false);
     }
     
-    if (val === '123456') {
-        setTimeout(onSuccess, 300);
-    } else if (val.length === 6) {
-        setError(true);
-        setTimeout(() => setPin(''), 500);
+    if (val.length === 6) {
+        setLoading(true);
+        try {
+            await api.verifyTotp(val);
+            setTimeout(onSuccess, 300);
+        } catch (err) {
+            setError(true);
+            setTimeout(() => setPin(''), 500);
+        } finally {
+            setLoading(false);
+        }
     }
   };
 
@@ -57,7 +65,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ onSuccess, onClose }) => {
                 </div>
 
                 <h2 className="text-2xl font-bold text-white mb-2">Yönetici Erişimi</h2>
-                <p className="text-slate-400 mb-8 text-sm">Devam etmek için 6 haneli güvenlik kodunu girin.</p>
+                <p className="text-slate-400 mb-8 text-sm">Devam etmek için 2FA uygulamanızdaki 6 haneli kodu girin.</p>
 
                 <div className="relative w-full max-w-[240px]">
                     <input
@@ -88,7 +96,14 @@ const LoginModal: React.FC<LoginModalProps> = ({ onSuccess, onClose }) => {
                     </div>
                 </div>
 
-                {error && (
+                {loading && (
+                    <div className="flex items-center gap-2 mt-4 text-sky-glow">
+                        <Loader2 size={16} className="animate-spin" />
+                        <span className="text-xs">Doğrulanıyor...</span>
+                    </div>
+                )}
+
+                {error && !loading && (
                     <motion.p 
                         initial={{ opacity: 0 }} 
                         animate={{ opacity: 1 }} 

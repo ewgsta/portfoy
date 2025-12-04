@@ -1,6 +1,6 @@
 
 export interface Project {
-  id: number;
+  id: number | string;
   title: string;
   description: string;
   tags: string[];
@@ -50,7 +50,7 @@ export interface SiteConfig {
 }
 
 export interface ContactMessage {
-  id: number;
+  id: number | string;
   name: string;
   email: string;
   message: string;

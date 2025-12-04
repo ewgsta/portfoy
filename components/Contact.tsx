@@ -1,8 +1,9 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Phone, MapPin, Music, Disc, ExternalLink, Gamepad2 } from 'lucide-react';
+import { Mail, Phone, MapPin, Music, Disc, ExternalLink, Gamepad2, Loader2, CheckCircle } from 'lucide-react';
 import { SiteConfig } from '../types';
+import { api } from '../src/api/client';
 
 interface LanyardData {
   discord_user: {
@@ -40,6 +41,8 @@ interface ContactProps {
 
 const Contact: React.FC<ContactProps> = ({ config }) => {
   const [lanyardData, setLanyardData] = useState<LanyardData | null>(null);
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [formStatus, setFormStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const DISCORD_ID = "752050889958883380";
 
   useEffect(() => {
@@ -292,30 +295,77 @@ const Contact: React.FC<ContactProps> = ({ config }) => {
              className="glass-panel p-6 md:p-8 rounded-2xl h-full flex flex-col justify-center order-2 lg:order-2"
           >
             <h3 className="text-2xl font-semibold text-white mb-6">{config.formTitle}</h3>
-            <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-                <div className="group">
-                <input 
-                    type="email" 
-                    placeholder={config.emailPlaceholder}
-                    className="w-full bg-transparent border-b border-white/20 px-0 py-4 text-white placeholder-slate-600 focus:outline-none focus:border-sky-glow transition-colors text-lg"
-                />
-                </div>
-                <div className="group">
-                <textarea 
-                    rows={4}
-                    placeholder={config.messagePlaceholder}
-                    className="w-full bg-transparent border-b border-white/20 px-0 py-4 text-white placeholder-slate-600 focus:outline-none focus:border-sky-glow transition-colors text-lg resize-none"
-                />
-                </div>
-                <div className="pt-4">
-                    <button 
-                    type="submit"
-                    className="w-full bg-sky-glow/10 border border-sky-glow/20 text-sky-glow font-medium py-4 rounded hover:bg-sky-glow/20 transition-all tracking-wide"
-                    >
-                    {config.buttonText}
-                    </button>
-                </div>
-            </form>
+            {formStatus === 'success' ? (
+              <div className="text-center py-8">
+                <CheckCircle size={48} className="text-green-500 mx-auto mb-4" />
+                <p className="text-white text-lg">Mesajınız gönderildi!</p>
+                <button 
+                  onClick={() => { setFormStatus('idle'); setFormData({ name: '', email: '', message: '' }); }}
+                  className="mt-4 text-sky-glow hover:underline"
+                >
+                  Yeni mesaj gönder
+                </button>
+              </div>
+            ) : (
+              <form className="space-y-6" onSubmit={async (e) => {
+                e.preventDefault();
+                if (!formData.name || !formData.email || !formData.message) return;
+                setFormStatus('loading');
+                try {
+                  await api.sendMessage(formData);
+                  setFormStatus('success');
+                } catch (error) {
+                  setFormStatus('error');
+                  setTimeout(() => setFormStatus('idle'), 3000);
+                }
+              }}>
+                  <div className="group">
+                  <input 
+                      type="text"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      placeholder="Adınız"
+                      className="w-full bg-transparent border-b border-white/20 px-0 py-4 text-white placeholder-slate-600 focus:outline-none focus:border-sky-glow transition-colors text-lg"
+                      required
+                  />
+                  </div>
+                  <div className="group">
+                  <input 
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      placeholder={config.emailPlaceholder}
+                      className="w-full bg-transparent border-b border-white/20 px-0 py-4 text-white placeholder-slate-600 focus:outline-none focus:border-sky-glow transition-colors text-lg"
+                      required
+                  />
+                  </div>
+                  <div className="group">
+                  <textarea 
+                      rows={4}
+                      value={formData.message}
+                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      placeholder={config.messagePlaceholder}
+                      className="w-full bg-transparent border-b border-white/20 px-0 py-4 text-white placeholder-slate-600 focus:outline-none focus:border-sky-glow transition-colors text-lg resize-none"
+                      required
+                  />
+                  </div>
+                  <div className="pt-4">
+                      <button 
+                      type="submit"
+                      disabled={formStatus === 'loading'}
+                      className="w-full bg-sky-glow/10 border border-sky-glow/20 text-sky-glow font-medium py-4 rounded hover:bg-sky-glow/20 transition-all tracking-wide disabled:opacity-50 flex items-center justify-center gap-2"
+                      >
+                      {formStatus === 'loading' ? (
+                        <><Loader2 size={20} className="animate-spin" /> Gönderiliyor...</>
+                      ) : formStatus === 'error' ? (
+                        'Hata! Tekrar deneyin'
+                      ) : (
+                        config.buttonText
+                      )}
+                      </button>
+                  </div>
+              </form>
+            )}
           </motion.div>
 
         </div>

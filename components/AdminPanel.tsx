@@ -7,6 +7,7 @@ import {
     MessageSquare, Eye, MousePointer, Activity, Menu, ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { api } from '../src/api/client';
 
 interface AdminPanelProps {
   projects: Project[];
@@ -120,11 +121,16 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
   /* --- AUTO SAVE LOGIC --- */
   useEffect(() => {
     // Debounce auto-save for Site Config and SEO
-    const timeoutId = setTimeout(() => {
+    const timeoutId = setTimeout(async () => {
         // Check if data is actually different to prevent unnecessary updates or loops
         if (JSON.stringify(configFormData) !== JSON.stringify(siteConfig)) {
-            onUpdateConfig(configFormData);
-            showToast('Değişiklikler otomatik kaydedildi', 'success');
+            try {
+                await api.updateConfig(configFormData);
+                onUpdateConfig(configFormData);
+                showToast('Değişiklikler otomatik kaydedildi', 'success');
+            } catch (error) {
+                showToast('Kaydetme başarısız', 'error');
+            }
         }
     }, 2000);
 
@@ -134,13 +140,25 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
   /* --- HANDLERS --- */
 
   // Messages
-  const handleDeleteMessage = (id: number) => {
-      onUpdateMessages(messages.filter(m => m.id !== id));
-      showToast('Mesaj silindi.', 'success');
+  const handleDeleteMessage = async (id: number | string) => {
+      try {
+          await api.deleteMessage(String(id));
+          onUpdateMessages(messages.filter(m => m.id !== id));
+          showToast('Mesaj silindi.', 'success');
+      } catch (error) {
+          showToast('Mesaj silinemedi.', 'error');
+      }
   };
 
-  const handleToggleRead = (id: number) => {
-      onUpdateMessages(messages.map(m => m.id === id ? {...m, isRead: !m.isRead} : m));
+  const handleToggleRead = async (id: number | string) => {
+      const msg = messages.find(m => m.id === id);
+      if (!msg) return;
+      try {
+          await api.toggleMessageRead(String(id), !msg.isRead);
+          onUpdateMessages(messages.map(m => m.id === id ? {...m, isRead: !m.isRead} : m));
+      } catch (error) {
+          showToast('Güncelleme başarısız.', 'error');
+      }
   };
 
   // Projects
@@ -159,14 +177,19 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
     setIsModalOpen(true);
   };
 
-  const handleDeleteProject = (id: number) => {
+  const handleDeleteProject = async (id: number | string) => {
     if (confirm('Bu projeyi silmek istediğinize emin misiniz?')) {
-        onUpdateProjects(projects.filter(p => p.id !== id));
-        showToast('Proje silindi.', 'success');
+        try {
+            await api.deleteProject(String(id));
+            onUpdateProjects(projects.filter(p => p.id !== id));
+            showToast('Proje silindi.', 'success');
+        } catch (error) {
+            showToast('Proje silinemedi.', 'error');
+        }
     }
   };
 
-  const handleSaveProject = () => {
+  const handleSaveProject = async () => {
     if (!projectFormData.title) { showToast('Başlık gerekli.', 'error'); return; }
 
     // Normalize tags
@@ -175,22 +198,27 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
         : (projectFormData.tags || []);
 
     const projectToSave = {
-        ...projectFormData,
+        title: projectFormData.title,
+        description: projectFormData.description,
+        image: projectFormData.image,
+        link: projectFormData.link,
         tags
     };
 
-    if (editingProject) {
-        onUpdateProjects(projects.map(p => p.id === editingProject.id ? { ...p, ...projectToSave } as Project : p));
-        showToast('Proje güncellendi.', 'success');
-    } else {
-        const newProject = {
-            ...projectToSave,
-            id: Math.max(0, ...projects.map(p => p.id)) + 1,
-        } as Project;
-        onUpdateProjects([...projects, newProject]);
-        showToast('Yeni proje oluşturuldu.', 'success');
+    try {
+        if (editingProject) {
+            const updated = await api.updateProject(String(editingProject.id), projectToSave);
+            onUpdateProjects(projects.map(p => p.id === editingProject.id ? { ...updated, id: updated._id } : p));
+            showToast('Proje güncellendi.', 'success');
+        } else {
+            const created = await api.createProject(projectToSave);
+            onUpdateProjects([...projects, { ...created, id: created._id }]);
+            showToast('Yeni proje oluşturuldu.', 'success');
+        }
+        setIsModalOpen(false);
+    } catch (error) {
+        showToast('İşlem başarısız.', 'error');
     }
-    setIsModalOpen(false);
   };
 
   /* --- PAGINATION HELPERS --- */
@@ -226,7 +254,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
             </div>
 
             <div className="p-4 border-t border-white/5">
-                 <button onClick={onExit} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-colors ${!sidebarOpen && 'justify-center'}`}>
+                 <button onClick={() => { api.logout(); onExit(); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-colors ${!sidebarOpen && 'justify-center'}`}>
                     <LogOut size={20} className="shrink-0" />
                     {sidebarOpen && <span className="whitespace-nowrap">Çıkış Yap</span>}
                  </button>

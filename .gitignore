@@ -24,3 +24,8 @@ dist-ssr
 *.sw?
 
 *.md
+
+# Environment
+.env
+.env.local
+.env.*.local
