@@ -2,7 +2,7 @@
 import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Project, SiteConfig } from '../types';
-import { ArrowUpRight, Github, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Github, ChevronRight, ChevronLeft } from 'lucide-react';
 import { api } from '../src/api/client';
 
 interface ProjectsProps {
@@ -67,13 +67,17 @@ const Projects: React.FC<ProjectsProps> = ({ projects, config }) => {
             style={{ scrollBehavior: 'smooth' }}
         >
           {projects.map((project) => (
-            <motion.div
+            <motion.a
+              href={project.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => api.trackProjectClick()}
               key={project.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ root: scrollContainerRef }}
               transition={{ duration: 0.5 }}
-              className="group glass-panel rounded-2xl relative overflow-hidden flex-shrink-0 w-full md:w-[calc(50%-12px)] lg:w-[calc(50%-12px)] snap-start flex flex-col transition-all duration-500 hover:border-sky-glow/30"
+              className="group glass-panel rounded-2xl relative overflow-hidden flex-shrink-0 w-full md:w-[calc(50%-12px)] lg:w-[calc(50%-12px)] snap-start flex flex-col transition-all duration-500 hover:border-sky-glow/30 cursor-pointer"
             >
               {/* Image Section - Compact Height */}
               <div className="h-40 md:h-48 w-full relative overflow-hidden bg-[#020617]">
@@ -85,11 +89,6 @@ const Projects: React.FC<ProjectsProps> = ({ projects, config }) => {
                     className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-1000 ease-out"
                   />
                   
-                  {/* ID Badge */}
-                  <div className="absolute top-3 right-3 z-20 bg-black/60 backdrop-blur-md text-sky-glow font-mono text-[10px] px-2 py-0.5 rounded-full border border-white/10">
-                     #{project.id.toString().padStart(2, '0')}
-                  </div>
-
                   {/* Gradient Overlay */}
                   <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-[#0b1120] to-transparent z-20 opacity-90" />
               </div>
@@ -97,13 +96,6 @@ const Projects: React.FC<ProjectsProps> = ({ projects, config }) => {
               {/* Content Section - Compact Padding */}
               <div className="flex flex-col flex-grow p-5 bg-[#0b1120]/50 backdrop-blur-sm relative z-30 -mt-2">
                 <div className="mb-2">
-                    <div className="flex flex-wrap gap-1.5 mb-2">
-                        {project.tags.map(tag => (
-                            <span key={tag} className="text-[10px] uppercase font-bold tracking-wider text-sky-300 bg-sky-900/20 px-1.5 py-0.5 rounded border border-sky-500/10">
-                                {tag}
-                            </span>
-                        ))}
-                    </div>
                     <h3 className="text-lg md:text-xl font-bold text-white group-hover:text-sky-400 transition-colors mb-1">
                       {project.title}
                     </h3>
@@ -112,19 +104,8 @@ const Projects: React.FC<ProjectsProps> = ({ projects, config }) => {
                 <p className="text-slate-400 font-light leading-relaxed mb-4 text-xs md:text-sm line-clamp-2">
                   {project.description}
                 </p>
-
-                <div className="mt-auto pt-3 border-t border-white/5 flex items-center justify-between">
-                    <a 
-                        href={project.link} 
-                        onClick={() => api.trackProjectClick()}
-                        className="inline-flex items-center gap-2 text-white text-xs font-medium hover:text-sky-glow transition-all group/link"
-                    >
-                        İncele
-                        <ArrowUpRight size={14} className="group-hover/link:-translate-y-0.5 group-hover/link:translate-x-0.5 transition-transform" />
-                    </a>
-                </div>
               </div>
-            </motion.div>
+            </motion.a>
           ))}
         </div>
 
