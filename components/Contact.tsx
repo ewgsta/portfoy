@@ -262,7 +262,7 @@ const Contact: React.FC<ContactProps> = ({ config }) => {
                 className="glass-panel p-1 rounded-xl h-40 relative group overflow-hidden"
             >
                  <a 
-                    href="https://maps.google.com/?q=Istanbul,Turkey" 
+                    href="https://maps.google.com/?q=Amasya,Turkey" 
                     target="_blank" 
                     rel="noreferrer"
                     className="block w-full h-full relative"
@@ -294,7 +294,6 @@ const Contact: React.FC<ContactProps> = ({ config }) => {
              viewport={{ once: true }}
              className="glass-panel p-6 md:p-8 rounded-2xl h-full flex flex-col justify-center order-2 lg:order-2"
           >
-            <h3 className="text-2xl font-semibold text-white mb-6">{config.formTitle}</h3>
             {formStatus === 'success' ? (
               <div className="text-center py-8">
                 <CheckCircle size={48} className="text-green-500 mx-auto mb-4" />
@@ -307,6 +306,8 @@ const Contact: React.FC<ContactProps> = ({ config }) => {
                 </button>
               </div>
             ) : (
+              <>
+              <h3 className="text-2xl font-semibold text-white mb-6">{config.formTitle}</h3>
               <form className="space-y-6" onSubmit={async (e) => {
                 e.preventDefault();
                 if (!formData.name || !formData.email || !formData.message) return;
@@ -365,6 +366,7 @@ const Contact: React.FC<ContactProps> = ({ config }) => {
                       </button>
                   </div>
               </form>
+              </>
             )}
           </motion.div>
 

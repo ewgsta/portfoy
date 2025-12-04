@@ -18,15 +18,15 @@ const Hero: React.FC<HeroProps> = ({ config }) => {
 
       <div className="max-w-4xl mx-auto px-6 text-center z-10">
         
-        {/* Japanese Title Element */}
+        {/* Japanese Title Element 
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.2 }}
           className="mb-4 md:mb-6 text-xs md:text-base text-sky-glow/80 font-light tracking-[0.5em] uppercase"
         >
-          青 (Ao - Mavi)
-        </motion.div>
+          Kimi no Na wa
+        </motion.div>*/}
 
         <motion.h1
           initial={{ opacity: 0, y: 30 }}

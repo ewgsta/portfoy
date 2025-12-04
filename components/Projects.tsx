@@ -134,7 +134,7 @@ const Projects: React.FC<ProjectsProps> = ({ projects, config }) => {
             className="mt-4 flex justify-center"
         >
             <a 
-                href="https://github.com" 
+                href="https://github.com/ewgsta" 
                 target="_blank"
                 rel="noreferrer"
                 className="flex items-center gap-2 px-6 py-3 rounded-full bg-[#0f172a] border border-white/10 hover:border-sky-glow/50 hover:shadow-[0_0_20px_rgba(56,189,248,0.2)] transition-all group"

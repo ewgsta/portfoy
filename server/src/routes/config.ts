@@ -33,14 +33,14 @@ router.get('/', async (req, res) => {
           emailPlaceholder: "E-posta Adresiniz",
           messagePlaceholder: "Projenizden bahsedin...",
           buttonText: "Gönder",
-          infoEmail: "contact@musubi.dev",
+          infoEmail: "hi@ewgsta.dev",
           infoPhone: "+90 555 000 00 00",
-          infoAddress: "İstanbul, Türkiye",
-          footerText: "© 2024 Musubi. Mavi derinliklerde kodlandı."
+          infoAddress: "Amasya, Türkiye",
+          footerText: "© 2025 ewgsta. Mavi derinliklerde kodlandı."
         },
         seo: {
-          title: "Musubi Portfolio | Dijital Sanat & Kod",
-          description: "Musubi Portfolio - Modern web teknolojileri ile oluşturulmuş kişisel portfolyo.",
+          title: "Furkan (ewgsta)",
+          description: "Furkan (ewgsta) - Portfoy",
           keywords: "react, developer, portfolio, web design"
         }
       });

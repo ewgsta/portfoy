@@ -239,9 +239,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
         >
             <div className="p-6 flex items-center justify-between border-b border-white/5 h-20">
                 {sidebarOpen ? (
-                    <div className="font-bold text-xl tracking-tight text-white">Musubi<span className="text-sky-500">.</span>Admin</div>
+                    <div className="font-bold text-xl tracking-tight text-white">Furkan<span className="text-sky-500">.</span>(ewgsta)</div>
                 ) : (
-                    <div className="font-bold text-xl text-sky-500 mx-auto">M.</div>
+                    <div className="font-bold text-xl text-sky-500 mx-auto">F.</div>
                 )}
             </div>
 
@@ -554,7 +554,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
                                     </div>
                                     <div className="text-[#006621] text-sm my-1 flex items-center gap-1">
                                         <img src="https://www.google.com/favicon.ico" alt="" className="w-4 h-4" />
-                                        https://musubi.dev/portfolio
+                                        https://ewgsta.me
                                     </div>
                                     <div className="text-[#545454] text-sm line-clamp-2 leading-relaxed">
                                         {configFormData.seo.description || "Sayfa açıklaması burada görünecek..."}

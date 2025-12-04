@@ -56,8 +56,8 @@ const About: React.FC<AboutProps> = ({ config }) => {
                 className="glass-panel p-6 rounded-xl hover:bg-white/5 transition-colors"
              >
                 <div className="text-sky-glow text-sm mb-2 font-mono">01. Estetik</div>
-                <h4 className="text-xl font-medium text-white mb-2">Fluent & Minimalist</h4>
-                <p className="text-slate-500 text-sm">Gözü yormayan, karanlık mod odaklı, akıcı animasyonlar ve derinlik hissi veren arayüzler.</p>
+                <h4 className="text-xl font-medium text-white mb-2">Temiz, Minimalist</h4>
+                <p className="text-slate-500 text-sm">Gözü yormayan, karanlık mod odaklı, akıcı animasyonlar ve derinlik hissi veren tasarımlar.</p>
              </motion.div>
 
              <motion.div
@@ -69,7 +69,7 @@ const About: React.FC<AboutProps> = ({ config }) => {
              >
                 <div className="text-blue-400 text-sm mb-2 font-mono">02. Teknoloji</div>
                 <h4 className="text-xl font-medium text-white mb-2">Modern Stack</h4>
-                <p className="text-slate-500 text-sm">React ekosistemi, TypeScript güvenliği ve Vercel hızı ile güçlendirilmiş sağlam altyapılar.</p>
+                <p className="text-slate-500 text-sm">Svelte ekosistemi, TypeScript güvenliği ve Vercel hızı ile güçlendirilmiş sağlam altyapılar.</p>
              </motion.div>
           </div>
         </div>

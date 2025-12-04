@@ -14,7 +14,7 @@ router.post('/verify-totp', (req, res) => {
     }
 
     const totp = new OTPAuth.TOTP({
-      issuer: 'Musubi',
+      issuer: 'ewgsta-portfoy',
       label: 'Admin',
       algorithm: 'SHA1',
       digits: 6,

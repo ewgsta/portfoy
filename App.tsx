@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import StarryBackground from './components/StarryBackground';
 import Navbar from './components/Navbar';
@@ -8,56 +7,59 @@ import Projects from './components/Projects';
 import Contact from './components/Contact';
 import LoginModal from './components/LoginModal';
 import AdminPanel from './components/AdminPanel';
+import ErrorPage from './components/ErrorPage';
+import { HeroSkeleton, AboutSkeleton, ProjectsSkeleton, ContactSkeleton, NavbarSkeleton } from './components/Skeleton';
 import { Project, SiteConfig, ContactMessage } from './types';
 import { api } from './src/api/client';
 
-const DEFAULT_CONFIG: SiteConfig = {
-  hero: { title: "", subtitle: "", ctaText: "" },
-  about: { title: "", description: "" },
-  projectsSection: { title: "", subtitle: "", githubButtonText: "" },
-  contact: { title: "", subtitle: "", formTitle: "", emailPlaceholder: "", messagePlaceholder: "", buttonText: "", infoEmail: "", infoPhone: "", infoAddress: "", footerText: "" },
-  seo: { title: "", description: "", keywords: "" }
-};
+type AppState = 'loading' | 'ready' | 'error';
 
 function App() {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [siteConfig, setSiteConfig] = useState<SiteConfig>(DEFAULT_CONFIG);
+  const [projects, setProjects] = useState<Project[] | null>(null);
+  const [siteConfig, setSiteConfig] = useState<SiteConfig | null>(null);
   const [messages, setMessages] = useState<ContactMessage[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [appState, setAppState] = useState<AppState>('loading');
   
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isAdminView, setIsAdminView] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Initial data fetch
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [projectsData, configData] = await Promise.all([
-          api.getProjects(),
-          api.getConfig()
-        ]);
-        setProjects(projectsData.map((p: any) => ({ ...p, id: p._id })));
-        setSiteConfig(configData);
-        
-        // Check if already authenticated
-        const token = api.getToken();
-        if (token) {
-          const valid = await api.verifyToken();
-          setIsAuthenticated(valid);
-        }
-      } catch (error) {
-        console.error('Data fetch error:', error);
-      } finally {
-        setLoading(false);
+  const fetchData = async () => {
+    setAppState('loading');
+    try {
+      const [projectsData, configData] = await Promise.all([
+        api.getProjects(),
+        api.getConfig()
+      ]);
+      
+      if (!configData || !projectsData) {
+        throw new Error('Veri alınamadı');
       }
-    };
+      
+      setProjects(projectsData.map((p: any) => ({ ...p, id: p._id })));
+      setSiteConfig(configData);
+      
+      // Check if already authenticated
+      const token = api.getToken();
+      if (token) {
+        const valid = await api.verifyToken();
+        setIsAuthenticated(valid);
+      }
+      
+      setAppState('ready');
+    } catch (error) {
+      console.error('Data fetch error:', error);
+      setAppState('error');
+    }
+  };
+
+  useEffect(() => {
     fetchData();
   }, []);
 
   // SEO Effect
   useEffect(() => {
-    if (siteConfig.seo.title) {
+    if (siteConfig?.seo?.title) {
       document.title = siteConfig.seo.title;
       
       let metaDescription = document.querySelector('meta[name="description"]');
@@ -68,7 +70,7 @@ function App() {
       }
       metaDescription.setAttribute('content', siteConfig.seo.description);
     }
-  }, [siteConfig.seo]);
+  }, [siteConfig?.seo]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -89,7 +91,6 @@ function App() {
   const handleLoginSuccess = async () => {
     setIsAuthenticated(true);
     setIsLoginOpen(false);
-    // Fetch messages for admin
     try {
       const messagesData = await api.getMessages();
       setMessages(messagesData.map((m: any) => ({ 
@@ -103,15 +104,13 @@ function App() {
     setIsAdminView(true);
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#020617] flex items-center justify-center">
-        <div className="text-sky-glow animate-pulse text-xl">Yükleniyor...</div>
-      </div>
-    );
+  // Hata durumu
+  if (appState === 'error') {
+    return <ErrorPage onRetry={fetchData} />;
   }
 
-  if (isAdminView) {
+  // Admin paneli
+  if (isAdminView && siteConfig && projects) {
     return (
       <AdminPanel 
         projects={projects} 
@@ -125,17 +124,32 @@ function App() {
     );
   }
 
+  // Ana sayfa (skeleton veya gerçek içerik)
   return (
     <div className="relative min-h-screen">
       <StarryBackground />
-      <Navbar />
       
-      <main className="flex flex-col">
-        <Hero config={siteConfig.hero} />
-        <About config={siteConfig.about} />
-        <Projects projects={projects} config={siteConfig.projectsSection} />
-        <Contact config={siteConfig.contact} />
-      </main>
+      {appState === 'loading' || !siteConfig || !projects ? (
+        <>
+          <NavbarSkeleton />
+          <main className="flex flex-col">
+            <HeroSkeleton />
+            <AboutSkeleton />
+            <ProjectsSkeleton />
+            <ContactSkeleton />
+          </main>
+        </>
+      ) : (
+        <>
+          <Navbar />
+          <main className="flex flex-col">
+            <Hero config={siteConfig.hero} />
+            <About config={siteConfig.about} />
+            <Projects projects={projects} config={siteConfig.projectsSection} />
+            <Contact config={siteConfig.contact} />
+          </main>
+        </>
+      )}
 
       {isLoginOpen && (
         <LoginModal 

@@ -36,7 +36,7 @@ const Navbar: React.FC = () => {
         {/* Logo - Left */}
         <a href="#" className="text-2xl font-bold tracking-tighter text-white relative group z-10">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-sky-glow to-blue-500">
-            musubi.
+            Furkan (ewgsta)
           </span>
           <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-gradient-to-r from-sky-glow to-blue-500 transition-all group-hover:w-full opacity-70" />
         </a>

@@ -19,39 +19,11 @@ const seedData = async () => {
     // Seed Projects
     const projects = await Project.insertMany([
       {
-        title: "Kataware Doki Weather",
-        description: "Günün saatine göre arayüzü değişen, alacakaranlıkta özel renk paletine geçen atmosferik hava durumu uygulaması.",
+        title: "deneme",
+        description: "deneme.",
         tags: ["React", "OpenWeather", "Tailwind"],
         link: "#",
-        image: "https://images.unsplash.com/photo-1534088568595-a066f410bcda?q=80&w=1000&auto=format&fit=crop"
-      },
-      {
-        title: "Itomori Arşivi",
-        description: "Kaybolan anıları saklamak için tasarlanmış, IPFS tabanlı merkeziyetsiz ve şifreli dijital günlük.",
-        tags: ["Next.js", "Solidity", "IPFS"],
-        link: "#",
-        image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop"
-      },
-      {
-        title: "Tiamat Yörüngesi",
-        description: "Gök cisimlerinin hareketlerini gerçek zamanlı izleyen, Three.js ile geliştirilmiş 3D görselleştirme.",
-        tags: ["Three.js", "WebGL", "Fiber"],
-        link: "#",
-        image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop"
-      },
-      {
-        title: "Musubi Chat",
-        description: "Gerçek zamanlı çeviri özelliği ile dil bariyerlerini aşan, minimalist mesajlaşma platformu.",
-        tags: ["Socket.io", "Node.js", "Redis"],
-        link: "#",
-        image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1000&auto=format&fit=crop"
-      },
-      {
-        title: "Nebula Finance",
-        description: "Yapay zeka destekli portföy yönetimi ve DeFi analiz paneli.",
-        tags: ["D3.js", "Python", "FastAPI"],
-        link: "#",
-        image: "https://images.unsplash.com/photo-1639322537228-f710d846310a?q=80&w=1000&auto=format&fit=crop"
+        image: "görsel"
       }
     ]);
     console.log(`${projects.length} proje eklendi`);
@@ -87,14 +59,14 @@ const seedData = async () => {
         emailPlaceholder: "E-posta Adresiniz",
         messagePlaceholder: "Projenizden bahsedin...",
         buttonText: "Gönder",
-        infoEmail: "contact@musubi.dev",
+        infoEmail: "hi@ewgsta.me",
         infoPhone: "+90 555 000 00 00",
-        infoAddress: "İstanbul, Türkiye",
-        footerText: "© 2024 Musubi. Mavi derinliklerde kodlandı."
+        infoAddress: "Amasya, Türkiye",
+        footerText: "© 2025 ewgsta. Mavi derinliklerde kodlandı."
       },
       seo: {
-        title: "Musubi Portfolio | Dijital Sanat & Kod",
-        description: "Musubi Portfolio - Modern web teknolojileri, yaratıcı tasarım ve derin mavi estetik ile oluşturulmuş kişisel portfolyo.",
+        title: "ewgsta Portfolio | Dijital Sanat & Kod",
+        description: "ewgsta Portfolio - Modern web teknolojileri, yaratıcı tasarım ve derin mavi estetik ile oluşturulmuş kişisel portfolyo.",
         keywords: "react, developer, portfolio, web design, creative"
       }
     });
