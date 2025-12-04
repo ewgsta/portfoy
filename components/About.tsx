@@ -69,7 +69,7 @@ const About: React.FC<AboutProps> = ({ config }) => {
              >
                 <div className="text-blue-400 text-sm mb-2 font-mono">02. Teknoloji</div>
                 <h4 className="text-xl font-medium text-white mb-2">Modern Stack</h4>
-                <p className="text-slate-500 text-sm">Svelte ekosistemi, TypeScript güvenliği ve Vercel hızı ile güçlendirilmiş sağlam altyapılar.</p>
+                <p className="text-slate-500 text-sm">Svelte, React ekosistemi, TypeScript güvenliği ve Vercel hızı ile güçlendirilmiş sağlam altyapılar.</p>
              </motion.div>
           </div>
         </div>

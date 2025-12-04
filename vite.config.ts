@@ -8,18 +8,23 @@ export default defineConfig(({ mode }) => {
       server: {
         port: 3000,
         host: '0.0.0.0',
-        proxy: {
+        // Local development proxy - Vercel handles this in production
+        proxy: mode === 'development' ? {
           '/api': {
             target: 'http://localhost:3001',
             changeOrigin: true,
           }
-        }
+        } : undefined
       },
       plugins: [react()],
       resolve: {
         alias: {
           '@': path.resolve(__dirname, '.'),
         }
+      },
+      build: {
+        outDir: 'dist',
+        sourcemap: false
       }
     };
 });
