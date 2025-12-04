@@ -36,3 +36,5 @@ dist-ssr
 # Server (local development only)
 server/node_modules
 server/dist
+.vercel
+.env*.local

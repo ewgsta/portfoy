@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { connectDB } from '../_lib/db';
-import { SiteConfig } from '../_lib/models';
-import { verifyAuth } from '../_lib/auth';
+import { connectDB } from './_lib/db';
+import { SiteConfig } from './_lib/models';
+import { verifyAuth } from './_lib/auth';
 
 const DEFAULT_CONFIG = {
   hero: {
@@ -38,25 +38,21 @@ const DEFAULT_CONFIG = {
 };
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  await connectDB();
+  try {
+    await connectDB();
 
-  if (req.method === 'GET') {
-    try {
+    if (req.method === 'GET') {
       let config = await SiteConfig.findOne();
       if (!config) {
         config = await SiteConfig.create(DEFAULT_CONFIG);
       }
       return res.json(config);
-    } catch (error) {
-      return res.status(500).json({ error: 'Config alınamadı' });
     }
-  }
 
-  if (req.method === 'PUT') {
-    if (!verifyAuth(req)) {
-      return res.status(401).json({ error: 'Yetkilendirme gerekli' });
-    }
-    try {
+    if (req.method === 'PUT') {
+      if (!verifyAuth(req)) {
+        return res.status(401).json({ error: 'Yetkilendirme gerekli' });
+      }
       let config = await SiteConfig.findOne();
       if (config) {
         config = await SiteConfig.findByIdAndUpdate(config._id, req.body, { new: true });
@@ -64,10 +60,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         config = await SiteConfig.create(req.body);
       }
       return res.json(config);
-    } catch (error) {
-      return res.status(400).json({ error: 'Config güncellenemedi' });
     }
-  }
 
-  return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ error: 'Method not allowed' });
+  } catch (error) {
+    console.error('Config error:', error);
+    return res.status(500).json({ error: 'Sunucu hatası' });
+  }
 }

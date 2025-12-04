@@ -20,6 +20,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     
     return res.json({ success: true });
   } catch (error) {
-    return res.status(500).json({ error: 'Kayıt başarısız' });
+    console.error('Pageview error:', error);
+    return res.json({ success: false }); // Silent fail
   }
 }
