@@ -30,11 +30,6 @@ dist-ssr
 .env.local
 .env.*.local
 
-# Vercel
-.vercel
-
-# Server (local development only)
+# Server
 server/node_modules
 server/dist
-.vercel
-.env*.local
