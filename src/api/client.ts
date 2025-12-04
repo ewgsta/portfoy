@@ -175,6 +175,44 @@ class ApiClient {
     this.setCache('config', result);
     return result;
   }
+
+  // Analytics
+  async trackPageView() {
+    try {
+      await this.request<any>('/analytics/pageview', { method: 'POST' });
+    } catch {
+      // Silent fail for analytics
+    }
+  }
+
+  async trackProjectClick() {
+    try {
+      await this.request<any>('/analytics/project-click', { method: 'POST' });
+    } catch {
+      // Silent fail for analytics
+    }
+  }
+
+  async getAnalyticsStats() {
+    return this.request<{
+      totals: {
+        pageViews: number;
+        projectClicks: number;
+        unreadMessages: number;
+        totalMessages: number;
+        totalProjects: number;
+      };
+      changes: {
+        viewsChange: number;
+        clicksChange: number;
+      };
+      chart: {
+        labels: string[];
+        pageViews: number[];
+        projectClicks: number[];
+      };
+    }>('/analytics/stats');
+  }
 }
 
 export const api = new ApiClient();

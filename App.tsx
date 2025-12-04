@@ -55,6 +55,8 @@ function App() {
 
   useEffect(() => {
     fetchData();
+    // Track page view
+    api.trackPageView();
   }, []);
 
   // SEO Effect

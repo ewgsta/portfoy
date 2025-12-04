@@ -3,6 +3,7 @@ import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Project, SiteConfig } from '../types';
 import { ArrowUpRight, Github, ChevronRight, ChevronLeft } from 'lucide-react';
+import { api } from '../src/api/client';
 
 interface ProjectsProps {
   projects: Project[];
@@ -115,6 +116,7 @@ const Projects: React.FC<ProjectsProps> = ({ projects, config }) => {
                 <div className="mt-auto pt-3 border-t border-white/5 flex items-center justify-between">
                     <a 
                         href={project.link} 
+                        onClick={() => api.trackProjectClick()}
                         className="inline-flex items-center gap-2 text-white text-xs font-medium hover:text-sky-glow transition-all group/link"
                     >
                         İncele

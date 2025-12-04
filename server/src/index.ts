@@ -6,6 +6,7 @@ import authRoutes from './routes/auth.js';
 import projectRoutes from './routes/projects.js';
 import messageRoutes from './routes/messages.js';
 import configRoutes from './routes/config.js';
+import analyticsRoutes from './routes/analytics.js';
 
 dotenv.config({ path: '../.env' });
 
@@ -21,6 +22,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/config', configRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
