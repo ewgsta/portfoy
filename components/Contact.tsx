@@ -43,6 +43,7 @@ const Contact: React.FC<ContactProps> = ({ config }) => {
   const [lanyardData, setLanyardData] = useState<LanyardData | null>(null);
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [formStatus, setFormStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const DISCORD_ID = "752050889958883380";
 
   useEffect(() => {
@@ -315,9 +316,13 @@ const Contact: React.FC<ContactProps> = ({ config }) => {
                 try {
                   await api.sendMessage(formData);
                   setFormStatus('success');
-                } catch (error) {
+                } catch (error: any) {
                   setFormStatus('error');
-                  setTimeout(() => setFormStatus('idle'), 3000);
+                  setErrorMessage(error.message || 'Bir hata oluştu');
+                  setTimeout(() => {
+                    setFormStatus('idle');
+                    setErrorMessage('');
+                  }, 5000);
                 }
               }}>
                   <div className="group">
@@ -359,7 +364,7 @@ const Contact: React.FC<ContactProps> = ({ config }) => {
                       {formStatus === 'loading' ? (
                         <><Loader2 size={20} className="animate-spin" /> Gönderiliyor...</>
                       ) : formStatus === 'error' ? (
-                        'Hata! Tekrar deneyin'
+                        errorMessage
                       ) : (
                         config.buttonText
                       )}
