@@ -90,19 +90,27 @@ function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isAuthenticated]);
 
-  const handleLoginSuccess = async () => {
+  useEffect(() => {
+    if (isAdminView && isAuthenticated) {
+      const fetchMessages = async () => {
+        try {
+          const messagesData = await api.getMessages();
+          setMessages(messagesData.map((m: any) => ({ 
+            ...m, 
+            id: m._id, 
+            date: new Date(m.createdAt).toISOString().split('T')[0] 
+          })));
+        } catch (error) {
+          console.error('Messages fetch error:', error);
+        }
+      };
+      fetchMessages();
+    }
+  }, [isAdminView, isAuthenticated]);
+
+  const handleLoginSuccess = () => {
     setIsAuthenticated(true);
     setIsLoginOpen(false);
-    try {
-      const messagesData = await api.getMessages();
-      setMessages(messagesData.map((m: any) => ({ 
-        ...m, 
-        id: m._id, 
-        date: new Date(m.createdAt).toISOString().split('T')[0] 
-      })));
-    } catch (error) {
-      console.error('Messages fetch error:', error);
-    }
     setIsAdminView(true);
   };
 
