@@ -177,9 +177,23 @@ class ApiClient {
   }
 
   // Analytics
+  private getVisitorId(): string {
+    let visitorId = localStorage.getItem('visitor_id');
+    if (!visitorId) {
+      visitorId = typeof crypto !== 'undefined' && crypto.randomUUID 
+        ? crypto.randomUUID() 
+        : Math.random().toString(36).substring(2) + Date.now().toString(36);
+      localStorage.setItem('visitor_id', visitorId);
+    }
+    return visitorId;
+  }
+
   async trackPageView() {
     try {
-      await this.request<any>('/analytics/pageview', { method: 'POST' });
+      await this.request<any>('/analytics/pageview', { 
+        method: 'POST',
+        body: JSON.stringify({ visitorId: this.getVisitorId() })
+      });
     } catch {
       // Silent fail for analytics
     }
@@ -187,7 +201,10 @@ class ApiClient {
 
   async trackProjectClick() {
     try {
-      await this.request<any>('/analytics/project-click', { method: 'POST' });
+      await this.request<any>('/analytics/project-click', { 
+        method: 'POST',
+        body: JSON.stringify({ visitorId: this.getVisitorId() })
+      });
     } catch {
       // Silent fail for analytics
     }

@@ -9,14 +9,28 @@ const router = Router();
 // Sayfa görüntüleme kaydet (public)
 router.post('/pageview', async (req, res) => {
   try {
+    const { visitorId } = req.body;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
-    await Analytics.findOneAndUpdate(
-      { date: today },
-      { $inc: { pageViews: 1 } },
-      { upsert: true, new: true }
-    );
+    let analytics = await Analytics.findOne({ date: today });
+    
+    if (!analytics) {
+      analytics = new Analytics({
+        date: today,
+        pageViews: 1,
+        uniqueVisitors: visitorId ? 1 : 0,
+        visitorIds: visitorId ? [visitorId] : []
+      });
+    } else {
+      analytics.pageViews += 1;
+      if (visitorId && !analytics.visitorIds.includes(visitorId)) {
+        analytics.uniqueVisitors += 1;
+        analytics.visitorIds.push(visitorId);
+      }
+    }
+    
+    await analytics.save();
     
     res.json({ success: true });
   } catch (error) {
@@ -27,14 +41,30 @@ router.post('/pageview', async (req, res) => {
 // Proje tıklaması kaydet (public)
 router.post('/project-click', async (req, res) => {
   try {
+    const { visitorId } = req.body;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
-    await Analytics.findOneAndUpdate(
-      { date: today },
-      { $inc: { projectClicks: 1 } },
-      { upsert: true, new: true }
-    );
+    let analytics = await Analytics.findOne({ date: today });
+
+    if (!analytics) {
+      analytics = new Analytics({
+        date: today,
+        projectClicks: visitorId ? 1 : 0,
+        projectClickerIds: visitorId ? [visitorId] : []
+      });
+    } else {
+      // Sadece bu kullanıcı bugün hiç tıklamadıysa arttır
+      if (visitorId && !analytics.projectClickerIds.includes(visitorId)) {
+        analytics.projectClicks += 1;
+        analytics.projectClickerIds.push(visitorId);
+      } else if (!visitorId) {
+        // visitorId yoksa eski usul arttır (fallback)
+        analytics.projectClicks += 1;
+      }
+    }
+    
+    await analytics.save();
     
     res.json({ success: true });
   } catch (error) {
