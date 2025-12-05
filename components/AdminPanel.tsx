@@ -258,15 +258,15 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ projects, siteConfig, messages,
                     <div className="p-3 bg-blue-500/10 rounded-xl text-blue-500"><Eye size={24}/></div>
                     {analytics && <span className={`text-sm font-mono ${analytics.changes.viewsChange >= 0 ? 'text-green-400' : 'text-red-400'}`}>{analytics.changes.viewsChange >= 0 ? '+' : ''}{analytics.changes.viewsChange}%</span>}
                   </div>
-                  <div className="text-3xl font-bold text-white mb-1">{analyticsLoading ? '...' : analytics?.totals?.pageViews.toLocaleString() || '0'}</div>
+                  <div className="text-3xl font-bold text-white mb-1">{analyticsLoading ? '...' : (analytics?.totals?.pageViews || 0).toLocaleString()}</div>
                   <div className="text-slate-500 text-sm">Toplam Görüntülenme</div>
                 </div>
-                                <div className="bg-[#0f172a] p-6 rounded-2xl border border-white/5">
+                <div className="bg-[#0f172a] p-6 rounded-2xl border border-white/5">
                   <div className="flex justify-between items-start mb-4">
                     <div className="p-3 bg-purple-500/10 rounded-xl text-purple-500"><MousePointer size={24}/></div>
                     {analytics && <span className={`text-sm font-mono ${analytics.changes.clicksChange >= 0 ? 'text-green-400' : 'text-red-400'}`}>{analytics.changes.clicksChange >= 0 ? '+' : ''}{analytics.changes.clicksChange}%</span>}
                   </div>
-                  <div className="text-3xl font-bold text-white mb-1">{analyticsLoading ? '...' : analytics?.totals?.projectClicks.toLocaleString() || '0'}</div>
+                  <div className="text-3xl font-bold text-white mb-1">{analyticsLoading ? '...' : (analytics?.totals?.projectClicks || 0).toLocaleString()}</div>
                   <div className="text-slate-500 text-sm">Proje Tıklamaları</div>
                 </div>
                 <div className="bg-[#0f172a] p-6 rounded-2xl border border-white/5">
@@ -274,31 +274,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ projects, siteConfig, messages,
                     <div className="p-3 bg-orange-500/10 rounded-xl text-orange-500"><Activity size={24}/></div>
                     <span className="text-slate-500 text-sm font-mono">Tekil</span>
                   </div>
-                  <div className="text-3xl font-bold text-white mb-1">{analyticsLoading ? '...' : analytics?.totals?.uniqueVisitors.toLocaleString() || '0'}</div>
-                  <div className="text-slate-500 text-sm">Tekil Ziyaretçi</div>
-                </div>
-                <div className="bg-[#0f172a] p-6 rounded-2xl border border-white/5">
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="p-3 bg-sky-500/10 rounded-xl text-sky-500"><MessageSquare size={24}/></div>
-                    <span className="text-slate-500 text-sm font-mono">Bekleyen</span>
-                  </div>
-                  <div className="text-3xl font-bold text-white mb-1">{analyticsLoading ? '...' : analytics?.totals?.unreadMessages || messages.filter(m => !m.isRead).length}</div>
-                  <div className="text-slate-500 text-sm">Yeni Mesaj</div>
-                </div>
-                <div className="bg-[#0f172a] p-6 rounded-2xl border border-white/5">
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="p-3 bg-green-500/10 rounded-xl text-green-500"><FolderOpen size={24}/></div>
-                    <span className="text-green-400 text-sm font-mono">Aktif</span>
-                  </div>
-                  <div className="text-3xl font-bold text-white mb-1">{analyticsLoading ? '...' : analytics?.totals?.totalProjects || projects.length}</div>
-                  <div className="text-slate-500 text-sm">Toplam Proje</div>
-                </div>
-                <div className="bg-[#0f172a] p-6 rounded-2xl border border-white/5">
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="p-3 bg-orange-500/10 rounded-xl text-orange-500"><Activity size={24}/></div>
-                    <span className="text-slate-500 text-sm font-mono">Tekil</span>
-                  </div>
-                  <div className="text-3xl font-bold text-white mb-1">{analyticsLoading ? '...' : analytics?.totals?.uniqueVisitors.toLocaleString() || '0'}</div>
+                  <div className="text-3xl font-bold text-white mb-1">{analyticsLoading ? '...' : (analytics?.totals?.uniqueVisitors || 0).toLocaleString()}</div>
                   <div className="text-slate-500 text-sm">Tekil Ziyaretçi</div>
                 </div>
                 <div className="bg-[#0f172a] p-6 rounded-2xl border border-white/5">
