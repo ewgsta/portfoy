@@ -49,6 +49,7 @@ interface AnalyticsData {
   totals: {
     pageViews: number;
     projectClicks: number;
+    uniqueVisitors: number;
     unreadMessages: number;
     totalMessages: number;
     totalProjects: number;
@@ -270,19 +271,19 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ projects, siteConfig, messages,
                 </div>
                 <div className="bg-[#0f172a] p-6 rounded-2xl border border-white/5">
                   <div className="flex justify-between items-start mb-4">
+                    <div className="p-3 bg-orange-500/10 rounded-xl text-orange-500"><Activity size={24}/></div>
+                    <span className="text-slate-500 text-sm font-mono">Tekil</span>
+                  </div>
+                  <div className="text-3xl font-bold text-white mb-1">{analyticsLoading ? '...' : analytics?.totals.uniqueVisitors.toLocaleString() || '0'}</div>
+                  <div className="text-slate-500 text-sm">Tekil Ziyaretçi</div>
+                </div>
+                <div className="bg-[#0f172a] p-6 rounded-2xl border border-white/5">
+                  <div className="flex justify-between items-start mb-4">
                     <div className="p-3 bg-sky-500/10 rounded-xl text-sky-500"><MessageSquare size={24}/></div>
                     <span className="text-slate-500 text-sm font-mono">Bekleyen</span>
                   </div>
                   <div className="text-3xl font-bold text-white mb-1">{analyticsLoading ? '...' : analytics?.totals.unreadMessages || messages.filter(m => !m.isRead).length}</div>
                   <div className="text-slate-500 text-sm">Yeni Mesaj</div>
-                </div>
-                <div className="bg-[#0f172a] p-6 rounded-2xl border border-white/5">
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="p-3 bg-green-500/10 rounded-xl text-green-500"><FolderOpen size={24}/></div>
-                    <span className="text-green-400 text-sm font-mono">Aktif</span>
-                  </div>
-                  <div className="text-3xl font-bold text-white mb-1">{analyticsLoading ? '...' : analytics?.totals.totalProjects || projects.length}</div>
-                  <div className="text-slate-500 text-sm">Toplam Proje</div>
                 </div>
               </div>
 

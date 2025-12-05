@@ -17,13 +17,35 @@ router.get('/', authMiddleware, async (req, res) => {
 // Yeni mesaj gönder (public - contact form)
 router.post('/', async (req, res) => {
   try {
-    const { name, email, message } = req.body;
+    const { name, email, message, visitorId } = req.body;
+    const ip = req.ip || req.socket.remoteAddress;
     
     if (!name || !email || !message) {
       return res.status(400).json({ error: 'Tüm alanlar gerekli' });
     }
 
-    const newMessage = new Message({ name, email, message });
+    // Rate Limiting: Son 1 saat içinde bu IP veya VisitorID'den mesaj gelmiş mi?
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+    
+    const existingMessage = await Message.findOne({
+      $or: [
+        { ip: ip, createdAt: { $gt: oneHourAgo } },
+        { visitorId: visitorId, createdAt: { $gt: oneHourAgo } }
+      ]
+    });
+
+    if (existingMessage) {
+      return res.status(429).json({ error: 'Çok fazla mesaj gönderdiniz. Lütfen 1 saat bekleyin.' });
+    }
+
+    const newMessage = new Message({ 
+      name, 
+      email, 
+      message,
+      ip,
+      visitorId
+    });
+    
     await newMessage.save();
     res.status(201).json({ message: 'Mesajınız gönderildi' });
   } catch (error) {

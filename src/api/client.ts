@@ -140,7 +140,7 @@ class ApiClient {
   async sendMessage(data: { name: string; email: string; message: string }) {
     return this.request<any>('/messages', {
       method: 'POST',
-      body: JSON.stringify(data),
+      body: JSON.stringify({ ...data, visitorId: this.getVisitorId() }),
     });
   }
 
@@ -177,14 +177,49 @@ class ApiClient {
   }
 
   // Analytics
+  /**
+   * Ziyaretçi Kimliği Oluşturma (Device Fingerprinting + UUID)
+   * Bu fonksiyon, kullanıcının tarayıcı özelliklerini ve rastgele bir UUID'yi birleştirerek
+   * benzersiz ve tutarlı bir kimlik oluşturur.
+   */
   private getVisitorId(): string {
     let visitorId = localStorage.getItem('visitor_id');
+    
     if (!visitorId) {
-      visitorId = typeof crypto !== 'undefined' && crypto.randomUUID 
+      // 1. Tarayıcı Parmak İzi (Browser Fingerprint) Bileşenleri
+      // Bu veriler cihazı tanımlamaya yardımcı olur
+      const components = [
+        navigator.userAgent,                      // Tarayıcı ve OS bilgisi
+        screen.width + 'x' + screen.height,       // Ekran çözünürlüğü
+        navigator.language,                       // Dil tercihi
+        Intl.DateTimeFormat().resolvedOptions().timeZone, // Saat dilimi
+        navigator.hardwareConcurrency || 1,       // Çekirdek sayısı
+        (navigator as any).deviceMemory || 0      // RAM miktarı (varsa)
+      ];
+
+      // 2. Basit Hash Algoritması (DJB2 benzeri)
+      // Bileşenleri tek bir kısa string'e dönüştürür
+      const fingerprintString = components.join('|');
+      let hash = 0;
+      for (let i = 0; i < fingerprintString.length; i++) {
+        const char = fingerprintString.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // 32-bit integer'a çevir
+      }
+      const deviceHash = Math.abs(hash).toString(36);
+
+      // 3. Benzersiz UUID (Unique Identifier)
+      // Çakışmaları önlemek için kriptografik rastgelelik ekler
+      const uniquePart = typeof crypto !== 'undefined' && crypto.randomUUID 
         ? crypto.randomUUID() 
         : Math.random().toString(36).substring(2) + Date.now().toString(36);
+
+      // 4. Hibrit ID: [Cihaz İmzası]-[Benzersiz ID]
+      visitorId = `${deviceHash}-${uniquePart}`;
+      
       localStorage.setItem('visitor_id', visitorId);
     }
+    
     return visitorId;
   }
 
